@@ -1,0 +1,55 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <title>
+            Online Chat App
+        </title>
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>
+                Chatting App Online
+            </h1>
+            <form class="well">
+                <textarea name="taMessage" id="taMessage" cols="30" rows="10" class="form-control">
+
+                </textarea>
+            </br>
+                <input type="text" id="txtMessage" class="form-control"/>
+                <br/>
+                <button class="btn btn-danger" id="btnSend">
+                    Send
+                </button>
+            </form>
+        </div>
+
+        <h1 class="text-center">Hello World !!</h1>
+        
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+            
+
+            $(document).ready(function(){
+                /* below io referred from server.js */
+                const socket = io.connect("/");
+                let chatterName;
+                socket.on("acknowledge",(data)=>{
+                    console.log(data.message);
+                    chatterName = prompt("Please Enter Name.....");
+                });
+
+                socket.on("MessageReceived",(chatterName,data)=>{
+                    $("#taMessage").append(chatterName + " : " + data + "\n");
+                    });
+
+                $("#btnSend").on("click",(event)=>{
+                    event.preventDefault();
+                    let message = $("#txtMessage").val();
+                    socket.emit("msgServer", chatterName, message);
+                    $("#txtMessage").val('');
+                })
+            })
+        </script>
+</html>
